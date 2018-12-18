@@ -23,3 +23,4 @@ Containers:
 
 - **zookeeper** image from [wurstmeister/zookeeper](https://hub.docker.com/r/wurstmeister/zookeeper/)
 - **kafka** image from [wurstmeister/kafka](https://hub.docker.com/r/wurstmeister/kafka/)
+- **traefik**
