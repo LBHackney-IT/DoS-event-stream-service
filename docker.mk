@@ -9,6 +9,9 @@ up:
 	docker-compose pull
 	docker-compose up -d --remove-orphans
 	@echo "Apache Kafka and Apache Zookeeper up for $(PROJECT_NAME)"
+	@echo "Dashboard at http://${PROJECT_BASE_URL}:${DASHBOARD_PORT}"
+	@echo "Kafka at http://${PROJECT_BASE_URL}:${KAFKA_PORT}"
+	@echo "Zookeeper at http://${PROJECT_BASE_URL}:${ZOOKEEPER_PORT}"
 
 down: stop
 
