@@ -15,3 +15,12 @@ services:
       KAFKA_ZOOKEEPER_CONNECT: zookeeper:${ZOOKEEPER_PORT}
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock
+  traefik:
+    image: traefik
+    container_name: "${PROJECT_NAME}_traefik"
+    command: -c /dev/null --web --docker --logLevel=INFO
+    ports:
+      - '9092:9092'
+      - '8092:8080' # Dashboard
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
