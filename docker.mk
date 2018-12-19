@@ -1,6 +1,6 @@
 include .env
 
-.PHONY: up down stop prune
+.PHONY: up down stop prune scale
 
 default: up
 
@@ -22,3 +22,11 @@ stop:
 prune:
 	@echo "Removing containers for $(PROJECT_NAME)..."
 	@docker-compose down -v
+
+scale:
+	@echo "Scaling Kafka to $(kafka)"
+	@docker-compose scale kafka=$(kafka)
+
+# https://stackoverflow.com/a/6273809/1826109
+%:
+	@:
