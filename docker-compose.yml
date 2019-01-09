@@ -1,31 +1,44 @@
 version: '3'
 services:
   zookeeper:
-    image: wurstmeister/zookeeper:$ZOOKEEPER_TAG
+    image: zookeeper:$ZOOKEEPER_TAG
     container_name: "${PROJECT_NAME}_zookeeper"
+    restart: always
     labels:
       - "traefik.enable=false"
-#    ports:
-#      - "${ZOOKEEPER_PORT}:${ZOOKEEPER_PORT}"
-  kafka:
-    image: wurstmeister/kafka:${KAFKA_TAG}
     ports:
-      - "${KAFKA_PORT}"
+      - "${ZOOKEEPER_PORT}:${ZOOKEEPER_PORT}"
+    environment:
+      ZOO_MY_ID: 1
+      ZOO_SERVERS: server.1=0.0.0.0:2888:3888
+  kafka:
+    # image: wurstmeister/kafka:${KAFKA_TAG}
+    build: kafka/.
+    ports:
+      - "${KAFKA_PORT}:${KAFKA_PORT}"
     environment:
       KAFKA_ADVERTISED_HOST_NAME: ${KAFKA_ADVERTISED_HOST_NAME}
       KAFKA_ZOOKEEPER_CONNECT: zookeeper:${ZOOKEEPER_PORT}
+      KAFKA_CREATE_TOPICS: ${KAFKA_CREATE_TOPICS}
+      KAFKA_MESSAGE_MAX_BYTES: 2000000
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock
+      - ${PWD}/healthcheck.sh:/opt/kafka/bin/healthcheck.sh
     labels:
       - 'traefik.backend=kafka'
       - 'traefik.port=${KAFKA_PORT}'
       - 'traefik.frontend.rule=Host:${PROJECT_BASE_URL}'
+    healthcheck:
+      test: ["CMD-SHELL", "/bin/healthcheck.sh"]
+      interval: 5s
+      timeout: 10s
+      retries: 5
   traefik:
     image: traefik
     container_name: "${PROJECT_NAME}_traefik"
     command: -c /dev/null --web --docker --logLevel=INFO
     ports:
-      - '${KAFKA_PORT}:${KAFKA_PORT}'
+      # - '${KAFKA_PORT}:${KAFKA_PORT}'
       - '${DASHBOARD_PORT}:8080' # Dashboard
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock
