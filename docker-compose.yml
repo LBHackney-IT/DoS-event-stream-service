@@ -14,8 +14,8 @@ services:
   kafka:
     image: convivio/kafka:${KAFKA_TAG}
     # build: kafka/.
-    # ports:
-    #   - "${KAFKA_PORT}:${KAFKA_PORT}"
+    ports:
+      - "${KAFKA_PORT}:${KAFKA_PORT}"
     environment:
       KAFKA_ADVERTISED_HOST_NAME: ${KAFKA_ADVERTISED_HOST_NAME}
       KAFKA_ZOOKEEPER_CONNECT: zookeeper:${ZOOKEEPER_PORT}
@@ -38,7 +38,7 @@ services:
     container_name: "${PROJECT_NAME}_traefik"
     command: -c /dev/null --web --docker --logLevel=INFO
     ports:
-      - '${KAFKA_PORT}:${KAFKA_PORT}'
+      # - '${KAFKA_PORT}:${KAFKA_PORT}'
       - '${DASHBOARD_PORT}:8080' # Dashboard
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock
